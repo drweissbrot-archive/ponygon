@@ -6,7 +6,7 @@ use App\Events\Lobby\PlayerPromotedToLeader;
 use App\Models\Lobby;
 use App\Models\Player;
 use Event;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -30,7 +30,7 @@ class PromoteToLeaderTest extends TestCase
 
 		Event::assertDispatchedTimes(PlayerPromotedToLeader::class, 1);
 		Event::assertDispatched(PlayerPromotedToLeader::class, function ($event) use ($lobby, $player) {
-			return $event instanceof ShouldBroadcast
+			return $event instanceof ShouldBroadcastNow
 				&& $event->broadcastOn()->name === "private-lobby.{$lobby->id}"
 				&& $event->broadcastWith() === ['player' => $player->only('id', 'name', 'ready')];
 		});

@@ -9,7 +9,7 @@ use App\Events\Lobby\PlayerLeft;
 use App\Models\Lobby;
 use App\Models\Player;
 use Event;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -32,14 +32,14 @@ class KickTest extends TestCase
 
 		Event::assertDispatchedTimes(PlayerKicked::class, 1);
 		Event::assertDispatched(PlayerKicked::class, function ($event) use ($lobby, $player) {
-			return $event instanceof ShouldBroadcast
+			return $event instanceof ShouldBroadcastNow
 				&& $event->broadcastOn()->name === "private-lobby.{$lobby->id}"
 				&& $event->broadcastWith() === ['player' => $player->only('id', 'name', 'ready')];
 		});
 
 		Event::assertDispatchedTimes(PlayerLeft::class, 1);
 		Event::assertDispatched(PlayerLeft::class, function ($event) use ($lobby, $player) {
-			return $event instanceof ShouldBroadcast
+			return $event instanceof ShouldBroadcastNow
 				&& $event->broadcastOn()->name === "private-lobby.{$lobby->id}"
 				&& $event->broadcastWith() === ['player' => $player->only('id', 'name', 'ready')];
 		});
@@ -76,14 +76,14 @@ class KickTest extends TestCase
 
 		Event::assertDispatchedTimes(PlayerKicked::class, 1);
 		Event::assertDispatched(PlayerKicked::class, function ($event) use ($lobby, $player) {
-			return $event instanceof ShouldBroadcast
+			return $event instanceof ShouldBroadcastNow
 				&& $event->broadcastOn()->name === "private-lobby.{$lobby->id}"
 				&& $event->broadcastWith() === ['player' => $player->only('id', 'name', 'ready')];
 		});
 
 		Event::assertDispatchedTimes(GameWillStart::class, 2);
 		Event::assertDispatched(GameWillStart::class, function ($event) use ($lobby) {
-			return $event instanceof ShouldBroadcast
+			return $event instanceof ShouldBroadcastNow
 				&& $event->broadcastOn()->name === "private-lobby.{$lobby->id}";
 		});
 		Event::assertDispatchedTimes(GameCancelled::class, 1);

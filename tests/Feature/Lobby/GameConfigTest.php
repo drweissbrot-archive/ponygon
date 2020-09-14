@@ -6,7 +6,7 @@ use App\Events\Lobby\GameConfigChanged;
 use App\Models\Lobby;
 use App\Models\Player;
 use Event;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -47,7 +47,7 @@ class GameConfigTest extends TestCase
 
 		Event::assertDispatchedTimes(GameConfigChanged::class, 1);
 		Event::assertDispatched(GameConfigChanged::class, function ($event) use ($lobby) {
-			return $event instanceof ShouldBroadcast
+			return $event instanceof ShouldBroadcastNow
 				&& $event->broadcastOn()->name === "private-lobby.{$lobby->id}"
 				&& json_encode($event->broadcastWith()) === json_encode([
 					'selected_game' => 'werewolves',
@@ -64,7 +64,7 @@ class GameConfigTest extends TestCase
 
 		Event::assertDispatchedTimes(GameConfigChanged::class, 2);
 		Event::assertDispatched(GameConfigChanged::class, function ($event) use ($lobby) {
-			return $event instanceof ShouldBroadcast
+			return $event instanceof ShouldBroadcastNow
 				&& $event->broadcastOn()->name === "private-lobby.{$lobby->id}"
 				&& json_encode($event->broadcastWith()) === json_encode([
 					'selected_game' => 'werewolves',

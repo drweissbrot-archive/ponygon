@@ -2,9 +2,9 @@
 
 namespace App\Events;
 
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
-abstract class BroadcastEvent extends Event implements ShouldBroadcast
+abstract class BroadcastEvent extends Event implements ShouldBroadcastNow
 {
 	//
 }

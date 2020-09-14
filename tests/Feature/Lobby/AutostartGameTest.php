@@ -7,7 +7,7 @@ use App\Events\Lobby\GameWillStart;
 use App\Models\Lobby;
 use App\Models\Player;
 use Event;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -31,11 +31,9 @@ class AutostartGameTest extends TestCase
 
 		Event::assertDispatchedTimes(GameWillStart::class, 1);
 		Event::assertDispatched(GameWillStart::class, function ($event) use ($lobby) {
-			return $event instanceof ShouldBroadcast
+			return $event instanceof ShouldBroadcastNow
 				&& $event->broadcastOn()->name === "private-lobby.{$lobby->id}";
 		});
-
-		// TODO game needs to actually start when timer runs down
 	}
 
 	public function test_it_only_autostarts_when_the_player_count_requirements_are_met()
@@ -53,7 +51,7 @@ class AutostartGameTest extends TestCase
 
 		Event::assertDispatchedTimes(GameWillStart::class, 1);
 		Event::assertDispatched(GameWillStart::class, function ($event) use ($lobby) {
-			return $event instanceof ShouldBroadcast
+			return $event instanceof ShouldBroadcastNow
 				&& $event->broadcastOn()->name === "private-lobby.{$lobby->id}";
 		});
 
@@ -81,7 +79,7 @@ class AutostartGameTest extends TestCase
 		Event::assertDispatchedTimes(GameWillStart::class, 1);
 		Event::assertDispatchedTimes(GameCancelled::class, 0);
 		Event::assertDispatched(GameWillStart::class, function ($event) use ($lobby) {
-			return $event instanceof ShouldBroadcast
+			return $event instanceof ShouldBroadcastNow
 				&& $event->broadcastOn()->name === "private-lobby.{$lobby->id}";
 		});
 
@@ -90,7 +88,7 @@ class AutostartGameTest extends TestCase
 		Event::assertDispatchedTimes(GameWillStart::class, 1);
 		Event::assertDispatchedTimes(GameCancelled::class, 1);
 		Event::assertDispatched(GameCancelled::class, function ($event) use ($lobby) {
-			return $event instanceof ShouldBroadcast
+			return $event instanceof ShouldBroadcastNow
 				&& $event->broadcastOn()->name === "private-lobby.{$lobby->id}";
 		});
 
@@ -120,7 +118,7 @@ class AutostartGameTest extends TestCase
 		Event::assertDispatchedTimes(GameWillStart::class, 1);
 		Event::assertDispatchedTimes(GameCancelled::class, 0);
 		Event::assertDispatched(GameWillStart::class, function ($event) use ($lobby) {
-			return $event instanceof ShouldBroadcast
+			return $event instanceof ShouldBroadcastNow
 				&& $event->broadcastOn()->name === "private-lobby.{$lobby->id}";
 		});
 
@@ -129,7 +127,7 @@ class AutostartGameTest extends TestCase
 		Event::assertDispatchedTimes(GameWillStart::class, 1);
 		Event::assertDispatchedTimes(GameCancelled::class, 1);
 		Event::assertDispatched(GameCancelled::class, function ($event) use ($lobby) {
-			return $event instanceof ShouldBroadcast
+			return $event instanceof ShouldBroadcastNow
 				&& $event->broadcastOn()->name === "private-lobby.{$lobby->id}";
 		});
 
@@ -159,7 +157,7 @@ class AutostartGameTest extends TestCase
 		Event::assertDispatchedTimes(GameWillStart::class, 1);
 		Event::assertDispatchedTimes(GameCancelled::class, 0);
 		Event::assertDispatched(GameWillStart::class, function ($event) use ($lobby) {
-			return $event instanceof ShouldBroadcast
+			return $event instanceof ShouldBroadcastNow
 				&& $event->broadcastOn()->name === "private-lobby.{$lobby->id}";
 		});
 
