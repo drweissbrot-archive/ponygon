@@ -112,4 +112,39 @@ class Lobby extends Model
 
 		return $this;
 	}
+
+	public function gameCanBeStarted() : bool
+	{
+		if (! $this->game_config['selected_game'] || $this->invalidPlayerCount($this)) {
+			return false;
+		}
+
+		$hasReady = false;
+		$hasUnready = false;
+
+		foreach ($this->members as $player) {
+			if ($player->ready) {
+				$hasReady = true;
+			} else {
+				$hasUnready = true;
+			}
+
+			if (($hasReady && $hasUnready) || ($hasUnready && $this->game)) {
+				break;
+			}
+		}
+
+		return $hasReady && ! $hasUnready;
+	}
+
+	protected function invalidPlayerCount() : bool
+	{
+		$playerCount = $this->members->count();
+		$limits = $this->game_config[$this->game_config['selected_game']]['playerCount'];
+
+		$min = $limits['min'] ?? false;
+		$max = $limits['max'] ?? false;
+
+		return ($min !== false && $playerCount < $min) || ($max !== false && $playerCount > $max);
+	}
 }

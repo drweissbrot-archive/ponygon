@@ -4,11 +4,14 @@ namespace Tests\Feature\Lobby;
 
 use App\Events\Lobby\GameCancelled;
 use App\Events\Lobby\GameWillStart;
+use App\Jobs\Lobby\StartGame;
+use App\Jobs\QueuedJob;
 use App\Models\Lobby;
 use App\Models\Player;
 use Event;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Queue;
 use Tests\TestCase;
 
 class AutostartGameTest extends TestCase
@@ -18,6 +21,7 @@ class AutostartGameTest extends TestCase
 	public function test_game_starts_automatically_when_everyone_is_ready_and_a_game_is_selected()
 	{
 		Event::fake([GameWillStart::class]);
+		Queue::fake();
 
 		$lobby = Lobby::factory()->create([
 			'game_config' => array_merge(Lobby::DEFAULT_CONFIG, ['selected_game' => 'werewolves']),
@@ -33,6 +37,14 @@ class AutostartGameTest extends TestCase
 		Event::assertDispatched(GameWillStart::class, function ($event) use ($lobby) {
 			return $event instanceof ShouldBroadcastNow
 				&& $event->broadcastOn()->name === "private-lobby.{$lobby->id}";
+		});
+
+		Queue::assertPushed(StartGame::class, 1);
+		Queue::assertPushed(StartGame::class, function ($job) use ($lobby) {
+			return $job instanceof QueuedJob
+				&& $job->lobby->id === $lobby->id
+				&& $job->lobby->game->id === $lobby->refresh()->game_id
+				&& $job->delay === 5;
 		});
 	}
 

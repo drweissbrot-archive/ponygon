@@ -7,6 +7,7 @@ use App\Models\Lobby;
 use App\Models\Player;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
+use Queue;
 use Tests\TestCase;
 
 class InterfaceTest extends TestCase
@@ -35,6 +36,8 @@ class InterfaceTest extends TestCase
 
 	public function test_it_creates_games()
 	{
+		Queue::fake(); // prevent that the game is cancelled by the StartGame job
+
 		// this tests checks if the game is created with the lobby's game config
 		// instead of the default one, so if the default config value for amor
 		// is not true (as this test expects), this test needs to be updated

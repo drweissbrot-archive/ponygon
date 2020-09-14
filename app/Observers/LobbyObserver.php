@@ -6,6 +6,7 @@ use App\Events\Lobby\GameCancelled;
 use App\Events\Lobby\GameConfigChanged;
 use App\Events\Lobby\GameWillStart;
 use App\Events\Lobby\PlayerPromotedToLeader;
+use App\Jobs\Lobby\StartGame;
 use App\Models\Lobby;
 
 class LobbyObserver
@@ -53,10 +54,19 @@ class LobbyObserver
 
 	protected function autostartGame(Lobby $lobby) : void
 	{
-		if ($lobby->isDirty('game_id')) {
-			($lobby->game_id === null)
-				? GameCancelled::dispatch($lobby)
-				: GameWillStart::dispatch($lobby);
+		if (! $lobby->isDirty('game_id')) {
+			return;
+		}
+
+		if ($lobby->game_id) {
+			if ($lobby->game_id !== optional($lobby->game)->id) {
+				$lobby->load('game');
+			}
+
+			GameWillStart::dispatch($lobby);
+			StartGame::dispatch($lobby, $lobby->game)->delay(5);
+		} else {
+			GameCancelled::dispatch($lobby);
 		}
 	}
 }
