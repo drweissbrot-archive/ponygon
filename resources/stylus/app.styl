@@ -1,0 +1,19 @@
+@require '~normalize.css'
+@require 'vars'
+@require 'mixins'
+
+@require 'base'
+@require 'footer'
+@require 'input'
+@require 'source-sans-pro'
+@require 'typography'
+
+.page- {
+	&join {
+		@require 'pages/join'
+	}
+
+	&lobby {
+		@require 'pages/lobby'
+	}
+}

@@ -1,0 +1,24 @@
+*, *::after, *::before {
+	box-sizing border-box
+	margin 0
+	padding 0
+}
+
+html {
+	background #21
+	color #ae
+	font-size 62.5%
+}
+
+body {
+	min-height 100vh
+	font 1.6rem/1.5em $sans
+
+	display grid
+	grid-template-rows auto max-content
+}
+
+#app > * {
+	display grid
+	min-height 100%
+}

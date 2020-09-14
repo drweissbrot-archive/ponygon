@@ -1,0 +1,22 @@
+flsize($size, $multiplier) {
+	font-size $size
+	line-height $size * $multiplier
+}
+
+container($smallerPaddingBottom = true) {
+	width calc(100% - 12rem)
+	max-width 160rem
+	margin 0 auto
+
+	if ($smallerPaddingBottom) {
+		padding 4rem 0 2rem
+	} else {
+		padding 4rem 0
+	}
+}
+
+marginBottom() {
+	&:not(:last-child) {
+		margin-bottom 2rem
+	}
+}

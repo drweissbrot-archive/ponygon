@@ -1,0 +1,200 @@
+& {
+	display grid
+	grid-template-columns 1fr 2rem 1fr 2rem 3fr
+	grid-template-rows max-content auto 1fr
+	grid-template-areas 'heading 0 invite-link invite-link invite-link' 'members 0 log 1 ready' 'members 0 log 1 game-config'
+
+	container()
+	min-height 100%
+}
+
+h1 {
+	grid-area heading
+}
+
+.members {
+	grid-area members
+
+	display flex
+	flex-direction column
+	justify-content space-between
+
+	.players {
+		overflow-y auto
+	}
+
+	.leave {
+		text-align center
+		padding-top 2rem
+		margin-top 2rem
+		border-top .1rem solid #ae
+	}
+}
+
+.log {
+	grid-area log
+	padding 1rem 2rem
+
+	background #333
+	overflow-y auto
+
+	.entry {
+		&.--log {
+			font-style italic
+
+			&::before {
+				content '* '
+			}
+		}
+	}
+}
+
+> .ready {
+	grid-area ready
+
+	margin-bottom 2rem
+	display grid
+	grid-template-columns 1fr 2rem 3fr
+
+	padding 2rem 4rem
+	background $purple
+
+	.button,
+	.note {
+		display flex
+		align-items center
+		justify-content center
+	}
+
+	.button {
+		padding .5rem 0 // this is to make sure the box doesn't change height when match start countdown starts
+	}
+
+	.note {
+		grid-area 1/3
+		text-align center
+
+		strong {
+			display block
+		}
+
+		.starting {
+			flsize(3rem, 1.25)
+			font-weight 600
+			margin-left 1ch
+		}
+	}
+}
+
+.game-config {
+	grid-area game-config
+
+	.only-leader-can-edit {
+		margin 2rem 4rem
+		text-align center
+		font-weight 600
+	}
+
+	&.--selector {
+		.game {
+			marginBottom()
+
+			display grid
+			grid-template-rows auto auto auto
+			grid-template-columns 1fr 2rem 1fr
+			width 100%
+
+			text-align center
+
+			> * {
+				display block
+			}
+
+			.name {
+				grid-area 1/1/4/1
+
+				flsize(2.5rem, 1.25)
+				font-weight 600
+			}
+
+			.players {
+				grid-area 2/3
+			}
+		}
+	}
+
+	&:not(.--selector) {
+		.game-carousel {
+			display grid
+			grid-template-columns 1fr 2rem 12fr 2rem 1fr
+
+			text-align center
+			margin-bottom 2rem
+
+			.heading {
+				grid-area 1/3
+
+				padding 1rem 2rem
+				background #333
+			}
+
+			.right {
+				grid-area 1/5
+			}
+		}
+
+		.settings {
+			overflow-y auto
+
+			.no-settings {
+				text-align center
+			}
+		}
+
+		.input-group {
+			display grid
+			grid-template-rows auto auto auto
+			grid-template-columns 1fr 2rem 2fr
+
+			label {
+				grid-area 2/1
+
+				text-align right
+			}
+
+			input {
+				grid-area 1/3/4/3
+			}
+		}
+	}
+}
+
+.invite-link {
+	grid-area invite-link
+
+	text-align right
+	line-height 4.375rem // TODO this is to center the link vertically with the heading, maybe do that some less hardcoded way?
+
+	.copied-to-clipboard {
+		position relative
+
+		&::after {
+			content 'Copied to Clipboard!'
+
+			position absolute
+			right 0
+			padding 0 1rem
+
+			background #333
+			font-family $sans
+			pointer-events none
+		}
+	}
+}
+
+.member {
+	marginBottom()
+
+	padding 1rem 2rem
+	background #333
+}
