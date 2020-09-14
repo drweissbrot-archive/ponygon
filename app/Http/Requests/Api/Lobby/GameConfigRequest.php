@@ -9,6 +9,11 @@ class GameConfigRequest extends LeaderRequest
 		'werewolves.amor' => 'boolean',
 	];
 
+	public function authorize() : bool
+	{
+		return parent::authorize() && $this->lobby->game_id === null;
+	}
+
 	public function rules() : array
 	{
 		$rules = [];
