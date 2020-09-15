@@ -3,8 +3,9 @@
 namespace App\Jobs\Lobby;
 
 use App\Events\Lobby\GameStarting;
+use App\Games\Game;
 use App\Jobs\QueuedJob;
-use App\Models\game;
+use App\Models\Game as GameModel;
 use App\Models\Lobby;
 
 class StartGame extends QueuedJob
@@ -13,7 +14,7 @@ class StartGame extends QueuedJob
 
 	public $lobby;
 
-	public function __construct(Lobby $lobby, Game $game)
+	public function __construct(Lobby $lobby, GameModel $game)
 	{
 		$this->lobby = $lobby;
 		$this->game = $game;
@@ -28,7 +29,7 @@ class StartGame extends QueuedJob
 		}
 
 		if ($this->lobby->gameCanBeStarted()) {
-			app(Game::GAME_INSTANCES[$this->game->game])($this->game, $this->lobby);
+			$this->game->instance()->init();
 
 			GameStarting::dispatch($this->lobby, $this->game);
 		} else {

@@ -75,9 +75,8 @@ class InterfaceTest extends TestCase
 		$this->assertDatabaseHas('games', [
 			'lobby_id' => $lobby->id,
 			'game' => 'werewolves',
-			'state' => '{}',
-			'config' => json_encode(array_merge(Lobby::DEFAULT_CONFIG['werewolves'], ['amor' => false])
-			),
+			'state' => '[]',
+			'config' => json_encode(array_merge(Lobby::DEFAULT_CONFIG['werewolves'], ['amor' => false])),
 		]);
 	}
 
