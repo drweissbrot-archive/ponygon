@@ -2,8 +2,8 @@
 
 namespace Tests\Feature\Lobby;
 
-use App\Models\Game;
 use App\Models\Lobby;
+use App\Models\Match;
 use App\Models\Player;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
@@ -34,13 +34,14 @@ class InterfaceTest extends TestCase
 		$this->assertEquals($lobby->id, $player->lobby_id);
 	}
 
-	public function test_it_creates_games()
+	public function test_it_creates_matches()
 	{
-		Queue::fake(); // prevent that the game is cancelled by the StartGame job
+		Queue::fake(); // prevent that the match is cancelled by the StartMatch job
 
-		// this tests checks if the game is created with the lobby's game config
-		// instead of the default one, so if the default config value for amor
-		// is not true (as this test expects), this test needs to be updated
+		// this tests checks if the match is created with the lobby's game
+		// config instead of the default one, so if the default config value
+		// for amor is not true (as this test expects), this test needs to
+		// be updated
 		$this->assertTrue(Lobby::DEFAULT_CONFIG['werewolves']['amor']);
 
 		$config = array_merge(Lobby::DEFAULT_CONFIG, ['selected_game' => 'werewolves']);
@@ -48,31 +49,31 @@ class InterfaceTest extends TestCase
 
 		$lobby = Lobby::factory()->create(['game_config' => $config]);
 
-		$this->assertDatabaseCount('games', 0);
+		$this->assertDatabaseCount('matches', 0);
 
-		$game = $lobby->createGame();
+		$match = $lobby->createMatch();
 
-		$this->assertInstanceOf(Game::class, $game);
-		$this->assertTrue($game->exists());
+		$this->assertInstanceOf(Match::class, $match);
+		$this->assertTrue($match->exists());
 
-		$this->assertDatabaseCount('games', 1);
+		$this->assertDatabaseCount('matches', 1);
 		$this->assertDatabaseCount('lobbies', 1);
 
 		$lobby->refresh();
 
-		$this->assertEquals($lobby->id, $game->lobby_id);
-		$this->assertEquals($lobby->id, $game->lobby->id);
-		$this->assertEquals($game->id, $lobby->game_id);
-		$this->assertEquals($game->id, $lobby->game->id);
+		$this->assertEquals($lobby->id, $match->lobby_id);
+		$this->assertEquals($lobby->id, $match->lobby->id);
+		$this->assertEquals($match->id, $lobby->match_id);
+		$this->assertEquals($match->id, $lobby->match->id);
 
-		$this->assertCount(1, $lobby->games);
-		$this->assertTrue($lobby->games->contains($game));
+		$this->assertCount(1, $lobby->matches);
+		$this->assertTrue($lobby->matches->contains($match));
 
 		$this->assertDatabaseHas('lobbies', [
-			'game_id' => $game->id,
+			'match_id' => $match->id,
 		]);
 
-		$this->assertDatabaseHas('games', [
+		$this->assertDatabaseHas('matches', [
 			'lobby_id' => $lobby->id,
 			'game' => 'werewolves',
 			'state' => '[]',
@@ -80,26 +81,26 @@ class InterfaceTest extends TestCase
 		]);
 	}
 
-	public function test_it_cancels_games()
+	public function test_it_cancels_matches()
 	{
 		$lobby = Lobby::factory()->create([
 			'game_config' => array_merge(Lobby::DEFAULT_CONFIG, ['selected_game' => 'werewolves']),
 		]);
 
-		// test it doesn't do anything when no game is active
-		$this->assertInstanceOf(Lobby::class, $lobby->cancelGame());
+		// test it doesn't do anything when no match is active
+		$this->assertInstanceOf(Lobby::class, $lobby->cancelMatch());
 
 		$this->assertDatabaseCount('lobbies', 1);
-		$this->assertDatabaseCount('games', 0);
+		$this->assertDatabaseCount('matches', 0);
 
-		$game = $lobby->createGame();
+		$match = $lobby->createMatch();
 
-		$lobby->cancelGame()->refresh();
+		$lobby->cancelMatch()->refresh();
 
-		$this->assertNull($lobby->game_id);
-		$this->assertNull($lobby->game);
+		$this->assertNull($lobby->match_id);
+		$this->assertNull($lobby->match);
 
-		$this->assertCount(1, $lobby->games);
-		$this->assertTrue($lobby->games->contains($game));
+		$this->assertCount(1, $lobby->matches);
+		$this->assertTrue($lobby->matches->contains($match));
 	}
 }

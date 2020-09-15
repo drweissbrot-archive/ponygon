@@ -8,7 +8,7 @@ class Instance extends BaseInstance
 {
 	public function init()
 	{
-		$players = $this->game->lobby->members->shuffle();
+		$players = $this->match->lobby->members->shuffle();
 
 		$this->state()->set('x', $players[0]->id);
 		$this->state()->set('o', $players[1]->id);

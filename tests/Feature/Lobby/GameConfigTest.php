@@ -150,12 +150,12 @@ class GameConfigTest extends TestCase
 	public function test_one_cannot_change_game_config_while_game_is_starting()
 	{
 		Event::fake([GameConfigChanged::class]);
-		Queue::fake(); // prevent the game from being cancelled immediately by StartGame job
+		Queue::fake(); // prevent the game from being cancelled immediately by StartMatch job
 
 		$lobby = Lobby::factory()->create([
 			'game_config' => array_merge(Lobby::DEFAULT_CONFIG, ['selected_game' => 'tictactoe']),
 		]);
-		$lobby->createGame();
+		$lobby->createMatch();
 
 		$this->actingAs($lobby->leader)
 			->patchJson("/api/lobby/{$lobby->id}/game-config", [

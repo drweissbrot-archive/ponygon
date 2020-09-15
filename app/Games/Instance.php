@@ -2,18 +2,18 @@
 
 namespace App\Games;
 
-use App\Models\Game;
+use App\Models\Match;
 use Exception;
 
 abstract class Instance
 {
-	public $game;
+	public $match;
 
 	protected $cache = [];
 
-	public function __construct(Game $game)
+	public function __construct(Match $match)
 	{
-		$this->game = $game;
+		$this->match = $match;
 	}
 
 	abstract public function init();

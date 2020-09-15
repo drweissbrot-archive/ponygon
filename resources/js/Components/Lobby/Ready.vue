@@ -58,13 +58,13 @@ export default {
 	mounted() {
 		// TODO this will probably cause some issues when the lobby is unmounted and then re-mounted lateron (e.g. after a game has finished)
 		echo.private(`lobby.${this.lobbyId}`)
-			.listen('Lobby\\GameWillStart', (e) => {
+			.listen('Lobby\\MatchWillStart', (e) => {
 				this.starting = 4
 				this.startingInterval = setInterval(() => {
 					if (--this.starting < 1) clearInterval(this.startingInterval)
 				}, 1000)
 			})
-			.listen('Lobby\\GameCancelled', (e) => {
+			.listen('Lobby\\MatchCancelled', (e) => {
 				this.starting = false
 				clearInterval(this.startingInterval)
 			})

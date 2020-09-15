@@ -11,7 +11,7 @@ class GameConfigRequest extends LeaderRequest
 
 	public function authorize() : bool
 	{
-		return parent::authorize() && $this->lobby->game_id === null;
+		return parent::authorize() && $this->lobby->match_id === null;
 	}
 
 	public function rules() : array

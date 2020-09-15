@@ -9,7 +9,7 @@ use App\Support\Models\CastsToResource;
 use GoldSpecDigital\LaravelEloquentUUID\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Game extends Model
+class Match extends Model
 {
 	use CastsToResource, HasFactory;
 
@@ -31,9 +31,9 @@ class Game extends Model
 	{
 		parent::boot();
 
-		static::creating(function ($game) {
-			if (! $game->state || $game->state === '{}') {
-				$game->state = [];
+		static::creating(function ($match) {
+			if (! $match->state || $match->state === '{}') {
+				$match->state = [];
 			}
 		});
 	}

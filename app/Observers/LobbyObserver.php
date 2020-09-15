@@ -2,11 +2,11 @@
 
 namespace App\Observers;
 
-use App\Events\Lobby\GameCancelled;
 use App\Events\Lobby\GameConfigChanged;
-use App\Events\Lobby\GameWillStart;
+use App\Events\Lobby\MatchCancelled;
+use App\Events\Lobby\MatchWillStart;
 use App\Events\Lobby\PlayerPromotedToLeader;
-use App\Jobs\Lobby\StartGame;
+use App\Jobs\Lobby\StartMatch;
 use App\Models\Lobby;
 
 class LobbyObserver
@@ -20,7 +20,7 @@ class LobbyObserver
 	{
 		$this->broadcastGameConfigChanges($lobby);
 		$this->broadcastLeaderChanges($lobby);
-		$this->autostartGame($lobby);
+		$this->autostartMatch($lobby);
 	}
 
 	protected function addLeaderAsMember(Lobby $lobby) : void
@@ -52,21 +52,21 @@ class LobbyObserver
 		}
 	}
 
-	protected function autostartGame(Lobby $lobby) : void
+	protected function autostartMatch(Lobby $lobby) : void
 	{
-		if (! $lobby->isDirty('game_id')) {
+		if (! $lobby->isDirty('match_id')) {
 			return;
 		}
 
-		if ($lobby->game_id) {
-			if ($lobby->game_id !== optional($lobby->game)->id) {
-				$lobby->load('game');
+		if ($lobby->match_id) {
+			if ($lobby->match_id !== optional($lobby->match)->id) {
+				$lobby->load('match');
 			}
 
-			GameWillStart::dispatch($lobby);
-			StartGame::dispatch($lobby, $lobby->game)->delay(5);
+			MatchWillStart::dispatch($lobby);
+			StartMatch::dispatch($lobby, $lobby->match)->delay(5);
 		} else {
-			GameCancelled::dispatch($lobby);
+			MatchCancelled::dispatch($lobby);
 		}
 	}
 }

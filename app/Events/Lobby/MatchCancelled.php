@@ -2,7 +2,7 @@
 
 namespace App\Events\Lobby;
 
-class GameWillStart extends LobbyEvent
+class MatchCancelled extends LobbyEvent
 {
 	//
 }
