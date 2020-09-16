@@ -3,7 +3,7 @@
 namespace Tests\Feature\Match;
 
 use App\Events\Lobby\MatchCancelled;
-use App\Events\Lobby\MatchStarting;
+use App\Events\Player\MatchStarting;
 use App\Jobs\Lobby\StartMatch;
 use App\Jobs\QueuedJob;
 use App\Models\Lobby;
@@ -26,16 +26,27 @@ class StartMatchTest extends TestCase
 			'game_config' => array_merge(Lobby::DEFAULT_CONFIG, ['selected_game' => 'tictactoe']),
 		]);
 
-		Player::factory()->create(['lobby_id' => $lobby->id, 'ready' => true]);
+		$player = Player::factory()->create(['lobby_id' => $lobby->id, 'ready' => true]);
 		$lobby->leader->update(['ready' => true]);
 
 		$lobby->refresh();
 
-		Event::assertDispatchedTimes(MatchStarting::class, 1);
+		Event::assertDispatchedTimes(MatchStarting::class, 2);
 		Event::assertDispatched(MatchStarting::class, function ($event) use ($lobby) {
 			return $event instanceof ShouldBroadcastNow
-				&& $event->broadcastOn()->name === "private-lobby.{$lobby->id}"
-				&& $event->broadcastWith() === ['id' => $lobby->match->id, 'game' => 'tictactoe'];
+				&& $event->broadcastOn()->name === "private-player.{$lobby->leader->id}"
+				&& $event->broadcastWith() === [
+					'match' => ['id' => $lobby->match->id, 'game' => 'tictactoe'],
+					'data' => $lobby->leader->matchData(),
+				];
+		});
+		Event::assertDispatched(MatchStarting::class, function ($event) use ($lobby, $player) {
+			return $event instanceof ShouldBroadcastNow
+				&& $event->broadcastOn()->name === "private-player.{$player->id}"
+				&& $event->broadcastWith() === [
+					'match' => ['id' => $lobby->match->id, 'game' => 'tictactoe'],
+					'data' => $player->matchData(),
+				];
 		});
 
 		Event::assertDispatchedTimes(MatchCancelled::class, 0);

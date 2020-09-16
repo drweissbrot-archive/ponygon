@@ -14,6 +14,6 @@ class Instance extends BaseInstance
 
 	public function dataForPlayer(Player $player) : array
 	{
-		// TODO
+		return [];
 	}
 }

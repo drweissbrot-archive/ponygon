@@ -2,7 +2,7 @@
 
 namespace App\Jobs\Lobby;
 
-use App\Events\Lobby\MatchStarting;
+use App\Events\Player\MatchStarting;
 use App\Jobs\QueuedJob;
 use App\Models\Lobby;
 use App\Models\Match;
@@ -30,7 +30,9 @@ class StartMatch extends QueuedJob
 		if ($this->lobby->matchCanBeStarted()) {
 			$this->match->instance()->init();
 
-			MatchStarting::dispatch($this->lobby, $this->match);
+			foreach ($this->lobby->members as $player) {
+				MatchStarting::dispatch($player, $this->match);
+			}
 		} else {
 			$this->lobby->cancelMatch();
 		}

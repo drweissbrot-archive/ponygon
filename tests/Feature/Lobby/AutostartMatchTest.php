@@ -24,7 +24,7 @@ class AutostartMatchTest extends TestCase
 		Queue::fake();
 
 		$lobby = Lobby::factory()->create([
-			'game_config' => array_merge(Lobby::DEFAULT_CONFIG, ['selected_game' => 'werewolves']),
+			'game_config' => array_merge(Lobby::DEFAULT_CONFIG, ['selected_game' => 'tictactoe']),
 		]);
 
 		$player = Player::factory()->create(['lobby_id' => $lobby->id, 'ready' => true]);
@@ -79,7 +79,7 @@ class AutostartMatchTest extends TestCase
 		Event::fake([MatchCancelled::class, MatchWillStart::class]);
 
 		$lobby = Lobby::factory()->create([
-			'game_config' => array_merge(Lobby::DEFAULT_CONFIG, ['selected_game' => 'werewolves']),
+			'game_config' => array_merge(Lobby::DEFAULT_CONFIG, ['selected_game' => 'tictactoe']),
 		]);
 
 		$player = Player::factory()->create(['lobby_id' => $lobby->id, 'ready' => true]);
@@ -118,7 +118,7 @@ class AutostartMatchTest extends TestCase
 		Event::fake([MatchCancelled::class, MatchWillStart::class]);
 
 		$lobby = Lobby::factory()->create([
-			'game_config' => array_merge(Lobby::DEFAULT_CONFIG, ['selected_game' => 'werewolves']),
+			'game_config' => array_merge(Lobby::DEFAULT_CONFIG, ['selected_game' => 'tictactoe']),
 		]);
 
 		$player = Player::factory()->create(['lobby_id' => $lobby->id, 'ready' => true]);

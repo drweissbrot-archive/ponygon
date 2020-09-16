@@ -3,7 +3,7 @@
 namespace Tests\Feature\Games\TicTacToe;
 
 use App\Events\Lobby\MatchCancelled;
-use App\Events\Lobby\MatchStarting;
+use App\Events\Player\MatchStarting;
 use App\Models\Lobby;
 use App\Models\Player;
 use Event;
@@ -28,11 +28,22 @@ class InitTest extends TestCase
 
 		$lobby->refresh();
 
-		Event::assertDispatchedTimes(MatchStarting::class, 1);
+		Event::assertDispatchedTimes(MatchStarting::class, 2);
 		Event::assertDispatched(MatchStarting::class, function ($event) use ($lobby) {
 			return $event instanceof ShouldBroadcastNow
-				&& $event->broadcastOn()->name === "private-lobby.{$lobby->id}"
-				&& $event->broadcastWith() === ['id' => $lobby->match->id, 'game' => 'tictactoe'];
+				&& $event->broadcastOn()->name === "private-player.{$lobby->leader->id}"
+				&& $event->broadcastWith() === [
+					'match' => ['id' => $lobby->match->id, 'game' => 'tictactoe'],
+					'data' => $lobby->leader->matchData(),
+				];
+		});
+		Event::assertDispatched(MatchStarting::class, function ($event) use ($lobby, $player) {
+			return $event instanceof ShouldBroadcastNow
+				&& $event->broadcastOn()->name === "private-player.{$player->id}"
+				&& $event->broadcastWith() === [
+					'match' => ['id' => $lobby->match->id, 'game' => 'tictactoe'],
+					'data' => $player->matchData(),
+				];
 		});
 
 		Event::assertDispatchedTimes(MatchCancelled::class, 0);
