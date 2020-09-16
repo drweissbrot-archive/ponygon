@@ -50,6 +50,8 @@ class MatchController extends Controller
 
 		$match->lobby->update(['match_id' => null]);
 
+		$match->lobby->members->each->update(['ready' => false]);
+
 		return Response::noContent();
 	}
 }

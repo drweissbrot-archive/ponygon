@@ -36,6 +36,8 @@ class EndMatchTest extends TestCase
 		$this->assertCount(1, $lobby->matches);
 		$this->assertNull($lobby->match_id);
 		$this->assertNull($lobby->match);
+
+		$this->assertTrue($lobby->members->every(fn ($player) => $player->ready === false));
 	}
 
 	public function test_inactive_matches_cannot_be_ended()
@@ -50,6 +52,8 @@ class EndMatchTest extends TestCase
 			->assertNotFound();
 
 		Event::assertDispatched(MatchCancelled::class, 0);
+
+		$this->assertTrue($lobby->members->every(fn ($player) => $player->ready === true));
 	}
 
 	public function test_only_lobby_leader_can_end_match()
@@ -77,6 +81,8 @@ class EndMatchTest extends TestCase
 		$this->assertCount(1, $lobby->matches);
 		$this->assertNotNull($lobby->match_id);
 		$this->assertNotNull($lobby->match);
+
+		$this->assertTrue($lobby->members->every(fn ($player) => $player->ready === true));
 	}
 
 	protected function createLobbyWithGame() : array
