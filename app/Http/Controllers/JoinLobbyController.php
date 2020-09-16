@@ -8,6 +8,6 @@ class JoinLobbyController extends Controller
 {
 	public function __invoke(Lobby $lobby)
 	{
-		return redirect('/play')->withFragment($lobby->id);
+		return redirect(config('app.url') . '/play')->withFragment($lobby->id);
 	}
 }

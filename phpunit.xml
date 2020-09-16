@@ -22,6 +22,7 @@
 	</coverage>
 
 	<php>
+		<server name="APP_URL" value="https://ponygon-testing.test" />
 		<server name="INVITE_URL" value="https://testing-invite-url.test" />
 
 		<server name="APP_ENV" value="testing" />

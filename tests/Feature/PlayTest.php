@@ -33,8 +33,8 @@ class PlayTest extends TestCase
 	{
 		$lobby = Lobby::factory()->create();
 
-		$this->get($lobby->id)
-			->assertRedirect('/play#' . $lobby->id);
+		$this->get("https://testing-invite-url.test/{$lobby->id}")
+			->assertRedirect('https://ponygon-testing.test/play#' . $lobby->id);
 
 		$this->get('/play#' . $lobby->id)
 			->assertOk()
