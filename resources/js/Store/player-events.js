@@ -4,7 +4,7 @@ import store from '~Store'
 const listenToPlayer = (playerId) => {
 	echo.private(`player.${playerId}`)
 		.listen('Player\\MatchStarting', ({ match, data }) => {
-			// TODO
+			store.dispatch('match/setMatch', { match, data })
 		})
 }
 

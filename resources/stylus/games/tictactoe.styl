@@ -1,0 +1,67 @@
+& {
+	display grid
+	grid-template-columns 1fr 2rem 2.5fr 2rem 1fr
+	grid-template-areas 'self 0 playarea 1 opponent'
+
+	container()
+}
+
+.player {
+	display flex
+	justify-content space-between
+
+	&.--self {
+		grid-area self
+	}
+
+	&.--opponent {
+		grid-area opponent
+
+		flex-direction row-reverse
+		text-align right
+	}
+
+	h2,
+	.symbol {
+		flsize(3rem, 1)
+		font-weight 600
+	}
+
+	.symbol {
+		padding 0 2rem
+	}
+
+	h2 {
+		margin 0
+	}
+}
+
+.playarea {
+	grid-area playarea
+
+	text-align center
+}
+
+.board {
+	.row {
+		display flex
+		align-items center
+		justify-content center
+
+		&:not(:last-child) {
+			.node {
+				border-bottom none
+			}
+		}
+	}
+
+	.node {
+		padding 4rem
+		border .2rem solid #ae
+		flsize(2.5rem, 1)
+
+		&:not(:last-child) {
+			border-right none
+		}
+	}
+}
