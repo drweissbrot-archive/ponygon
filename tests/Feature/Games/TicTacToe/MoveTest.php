@@ -47,17 +47,18 @@ class MoveTest extends TestCase
 		$this->assertSimilar([
 			'scoreboard' => [
 				$player->id => [
-					'role' => ($lobby->match->state('x') === $player->id) ? 'X' : 'O',
+					'role' => 'X',
 					'score' => 0,
 				],
 				$lobby->leader->id => [
-					'role' => ($lobby->match->state('x') === $lobby->leader->id) ? 'X' : 'O',
+					'role' => 'O',
 					'score' => 0,
 				],
 			],
 
 			'board' => [['x', null, null], [null, null, null], [null, null, null]],
 			'turn' => $lobby->leader->id,
+			'winner' => false,
 		], $player->matchData());
 	}
 
@@ -88,18 +89,13 @@ class MoveTest extends TestCase
 
 		$this->assertSimilar([
 			'scoreboard' => [
-				$player->id => [
-					'role' => ($lobby->match->state('x') === $player->id) ? 'X' : 'O',
-					'score' => 0,
-				],
-				$lobby->leader->id => [
-					'role' => ($lobby->match->state('x') === $lobby->leader->id) ? 'X' : 'O',
-					'score' => 0,
-				],
+				$player->id => ['role' => 'X', 'score' => 0],
+				$lobby->leader->id => ['role' => 'O', 'score' => 0],
 			],
 
 			'board' => [[null, null, null], [null, null, 'o'], [null, null, null]],
 			'turn' => $player->id,
+			'winner' => false,
 		], $player->matchData());
 	}
 
@@ -125,18 +121,13 @@ class MoveTest extends TestCase
 
 		$this->assertSimilar([
 			'scoreboard' => [
-				$player->id => [
-					'role' => ($lobby->match->state('x') === $player->id) ? 'X' : 'O',
-					'score' => 0,
-				],
-				$lobby->leader->id => [
-					'role' => ($lobby->match->state('x') === $lobby->leader->id) ? 'X' : 'O',
-					'score' => 0,
-				],
+				$player->id => ['role' => 'X', 'score' => 0],
+				$lobby->leader->id => ['role' => 'O', 'score' => 0],
 			],
 
 			'board' => [[null, null, null], [null, null, null], [null, null, null]],
 			'turn' => $player->id,
+			'winner' => false,
 		], $player->matchData());
 	}
 
@@ -165,18 +156,13 @@ class MoveTest extends TestCase
 
 		$this->assertSimilar([
 			'scoreboard' => [
-				$player->id => [
-					'role' => ($lobby->match->state('x') === $player->id) ? 'X' : 'O',
-					'score' => 0,
-				],
-				$lobby->leader->id => [
-					'role' => ($lobby->match->state('x') === $lobby->leader->id) ? 'X' : 'O',
-					'score' => 0,
-				],
+				$player->id => ['role' => 'X', 'score' => 0],
+				$lobby->leader->id => ['role' => 'O', 'score' => 0],
 			],
 
 			'board' => [[null, null, null], [null, null, null], [null, null, null]],
 			'turn' => $player->id,
+			'winner' => false,
 		], $player->matchData());
 	}
 

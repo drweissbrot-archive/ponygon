@@ -3,13 +3,36 @@
 		<Player :player="{ id: playerId, name: playerName }" />
 
 		<section class="playarea">
-			<h1 v-if="ownTurn">
-				It’s your turn.
-			</h1>
+			<template v-if="data.winner === false">
+				<h1 v-if="ownTurn">
+					It’s your turn.
+				</h1>
 
-			<h1 v-else>
-				It’s {{ otherPlayer.name }}’s turn.
-			</h1>
+				<h1 v-else>
+					It’s {{ otherPlayer.name }}’s turn.
+				</h1>
+			</template>
+
+			<template v-else>
+				<h1 v-if="data.winner === 'tie'">
+					It’s a tie.
+				</h1>
+
+				<h1 v-else-if="data.winner === playerId">
+					You win! Congratulations!
+				</h1>
+
+				<h1 v-else-if="data.winner === otherPlayer.id">
+					{{ otherPlayer.name }} wins.
+				</h1>
+
+				<p>
+					Want a Rematch?
+					<a href="#" @click.prevent="rematch">
+						Play again
+					</a>
+				</p>
+			</template>
 
 			<div class="board">
 				<Board :ownTurn="ownTurn" />
@@ -29,6 +52,12 @@ export default {
 	components: {
 		Board,
 		Player,
+	},
+
+	methods: {
+		rematch() {
+			// TODO
+		},
 	},
 
 	computed: {
