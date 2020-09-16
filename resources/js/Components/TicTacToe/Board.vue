@@ -7,13 +7,14 @@
 				:disabled="node !== null || ! ownTurn"
 				@click.prevent="claimNode(x, y)"
 			>
-				{{ x }} {{ y }} {{ node }}
+				{{ (node || '&nbsp;').toUpperCase() }}
 			</button>
 		</div>
 	</div>
 </template>
 
 <script>
+import axios from 'axios'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -23,13 +24,14 @@ export default {
 
 	methods: {
 		claimNode(x, y) {
-			console.log('claiming node', x, y)
+			axios.post(`/api/match/${this.matchId}/move`, { x, y })
 		},
 	},
 
 	computed: {
 		...mapGetters({
 			data: 'match/data',
+			matchId: 'match/id',
 		}),
 	},
 }

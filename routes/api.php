@@ -12,4 +12,6 @@ Route::middleware('auth')->group(function () {
 	Route::post('/lobby/{lobby}/promote-to-leader', 'LobbyController@promoteToLeader');
 
 	Route::put('/ready', ReadyController::class);
+
+	Route::post('/match/{match}/move', 'MatchController@move');
 });

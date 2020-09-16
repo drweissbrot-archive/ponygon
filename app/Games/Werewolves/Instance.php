@@ -16,4 +16,9 @@ class Instance extends BaseInstance
 	{
 		return [];
 	}
+
+	public function makeMove(Player $player, array $data) : bool
+	{
+		// TODO
+	}
 }

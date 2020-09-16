@@ -6,6 +6,9 @@ const listenToPlayer = (playerId) => {
 		.listen('Player\\MatchStarting', ({ match, data }) => {
 			store.dispatch('match/setMatch', { match, data })
 		})
+		.listen('Player\\MatchData', (data) => {
+			store.dispatch('match/setData', data)
+		})
 }
 
 store.subscribe(({ type: mutation }, { player }) => {
