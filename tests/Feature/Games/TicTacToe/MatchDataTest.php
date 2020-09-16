@@ -7,7 +7,7 @@ use App\Models\Player;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class MatchData extends TestCase
+class MatchDataTest extends TestCase
 {
 	use RefreshDatabase;
 
