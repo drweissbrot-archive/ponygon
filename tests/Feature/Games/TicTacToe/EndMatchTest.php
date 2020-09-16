@@ -3,6 +3,7 @@
 namespace Tests\Feature\Games\TicTacToe;
 
 use App\Events\Lobby\MatchCancelled;
+use App\Events\Lobby\MatchEnded;
 use App\Models\Lobby;
 use App\Models\Player;
 use Event;
@@ -16,7 +17,7 @@ class EndMatchTest extends TestCase
 
 	public function test_lobby_leader_can_end_match()
 	{
-		Event::fake([MatchCancelled::class]);
+		Event::fake([MatchCancelled::class, MatchEnded::class]);
 
 		[$lobby, $player] = $this->createLobbyWithGame();
 		$lobby->match->state()->set('winner', 'tie');
@@ -27,6 +28,12 @@ class EndMatchTest extends TestCase
 
 		Event::assertDispatched(MatchCancelled::class, 1);
 		Event::assertDispatched(MatchCancelled::class, function ($event) use ($lobby) {
+			return $event instanceof ShouldBroadcastNow
+				&& $event->broadcastOn()->name === "private-lobby.{$lobby->id}";
+		});
+
+		Event::assertDispatched(MatchEnded::class, 1);
+		Event::assertDispatched(MatchEnded::class, function ($event) use ($lobby) {
 			return $event instanceof ShouldBroadcastNow
 				&& $event->broadcastOn()->name === "private-lobby.{$lobby->id}";
 		});
@@ -45,20 +52,21 @@ class EndMatchTest extends TestCase
 		[$lobby, $player] = $this->createLobbyWithGame();
 		$lobby->update(['match_id' => null]);
 
-		Event::fake([MatchCancelled::class]);
+		Event::fake([MatchCancelled::class, MatchEnded::class]);
 
 		$this->actingAs($lobby->leader)
 			->postJson("/api/match/{$lobby->match->id}/end")
 			->assertNotFound();
 
 		Event::assertDispatched(MatchCancelled::class, 0);
+		Event::assertDispatched(MatchEnded::class, 0);
 
 		$this->assertTrue($lobby->members->every(fn ($player) => $player->ready === true));
 	}
 
 	public function test_only_lobby_leader_can_end_match()
 	{
-		Event::fake([MatchCancelled::class]);
+		Event::fake([MatchCancelled::class, MatchEnded::class]);
 
 		[$lobby, $player] = $this->createLobbyWithGame();
 		$lobby->match->state()->set('winner', 'tie');
@@ -75,6 +83,7 @@ class EndMatchTest extends TestCase
 			->assertForbidden();
 
 		Event::assertDispatched(MatchCancelled::class, 0);
+		Event::assertDispatched(MatchEnded::class, 0);
 
 		$lobby->refresh();
 

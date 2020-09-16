@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\Lobby\MatchEnded;
 use App\Http\Controllers\Controller;
 use App\Models\Match;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -50,7 +51,9 @@ class MatchController extends Controller
 
 		$match->lobby->update(['match_id' => null]);
 
-		$match->lobby->members->each->update(['ready' => false]);
+		$match->lobby->members()->update(['ready' => false]);
+
+		MatchEnded::dispatch($match->lobby);
 
 		return Response::noContent();
 	}
