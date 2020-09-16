@@ -3,6 +3,7 @@
 namespace App\Games;
 
 use App\Models\Match;
+use App\Models\Player;
 use Exception;
 
 abstract class Instance
@@ -17,6 +18,8 @@ abstract class Instance
 	}
 
 	abstract public function init();
+
+	abstract public function dataForPlayer(Player $player) : array;
 
 	public function config(...$args)
 	{
