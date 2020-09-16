@@ -37,6 +37,7 @@ class MatchData extends TestCase
 				],
 			],
 			'turn' => $lobby->match->state('x'),
+			'board' => [[null, null, null], [null, null, null], [null, null, null]],
 		], $player->matchData());
 
 		$this->assertEquals($player->matchData(), $lobby->match->instance()->dataForPlayer($player));

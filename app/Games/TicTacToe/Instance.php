@@ -34,6 +34,7 @@ class Instance extends BaseInstance
 			],
 
 			'turn' => $this->state('turn'),
+			'board' => $this->state('board'),
 		];
 	}
 }
