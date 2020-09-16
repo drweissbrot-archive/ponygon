@@ -14,19 +14,19 @@ class EventServiceProvider extends ServiceProvider
 	 */
 	protected $listen = [
 		Events\Lobby\GameConfigChanged::class => [
-			Listeners\Lobby\AutostartGame::class,
+			Listeners\Lobby\AutostartMatch::class,
 		],
 
 		Events\Lobby\PlayerJoined::class => [
-			Listeners\Lobby\AutostartGame::class,
+			Listeners\Lobby\AutostartMatch::class,
 		],
 
 		Events\Lobby\PlayerLeft::class => [
-			Listeners\Lobby\AutostartGame::class,
+			Listeners\Lobby\AutostartMatch::class,
 		],
 
 		Events\Lobby\PlayerSetReady::class => [
-			Listeners\Lobby\AutostartGame::class,
+			Listeners\Lobby\AutostartMatch::class,
 		],
 	];
 

@@ -61,14 +61,14 @@ class Lobby extends Model
 		return $this->hasMany(Player::class);
 	}
 
-	public function game()
+	public function match()
 	{
-		return $this->belongsTo(Game::class);
+		return $this->belongsTo(Match::class);
 	}
 
-	public function games()
+	public function matches()
 	{
-		return $this->hasMany(Game::class);
+		return $this->hasMany(Match::class);
 	}
 
 	public function getInviteUrlAttribute() : string
@@ -84,32 +84,67 @@ class Lobby extends Model
 	}
 
 	/**
-	 * Create a game based on the lobby's game settings and set it as the lobby's active game.
+	 * Create a match based on the lobby's game settings and set it as the lobby's active game.
 	 */
-	public function createGame() : Game
+	public function createMatch() : Match
 	{
 		$game = $this->game_config['selected_game'];
 
-		$game = $this->games()->create([
+		$match = $this->matches()->create([
 			'lobby_id' => $this->id,
 			'game' => $game,
 			'config' => $this->game_config[$game],
 		]);
 
-		$this->update(['game_id' => $game->id]);
+		$this->update(['match_id' => $match->id]);
 
-		return $game;
+		return $match;
 	}
 
 	/**
-	 * Cancels the currently active game.
+	 * Cancels the currently active match.
 	 */
-	public function cancelGame() : self
+	public function cancelMatch() : self
 	{
-		if ($this->game_id) {
-			$this->update(['game_id' => null]);
+		if ($this->match_id) {
+			$this->update(['match_id' => null]);
 		}
 
 		return $this;
+	}
+
+	public function matchCanBeStarted() : bool
+	{
+		if (! $this->game_config['selected_game'] || $this->invalidPlayerCount($this)) {
+			return false;
+		}
+
+		$hasReady = false;
+		$hasUnready = false;
+
+		foreach ($this->members as $player) {
+			if ($player->ready) {
+				$hasReady = true;
+			} else {
+				$hasUnready = true;
+			}
+
+			if (($hasReady && $hasUnready) || ($hasUnready && $this->match)) {
+				break;
+			}
+		}
+
+		return $hasReady && ! $hasUnready;
+	}
+
+	protected function invalidPlayerCount() : bool
+	{
+		$playerCount = $this->members->count();
+		$limits = $this->game_config[$this->game_config['selected_game']]['playerCount'];
+
+		$min = $limits['min'] ?? false;
+		$max = $limits['max'] ?? false;
+
+		return ($min !== false && $playerCount < $min) || ($max !== false && $playerCount > $max);
 	}
 }

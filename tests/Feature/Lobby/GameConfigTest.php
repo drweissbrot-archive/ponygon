@@ -6,8 +6,9 @@ use App\Events\Lobby\GameConfigChanged;
 use App\Models\Lobby;
 use App\Models\Player;
 use Event;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Queue;
 use Tests\TestCase;
 
 class GameConfigTest extends TestCase
@@ -47,7 +48,7 @@ class GameConfigTest extends TestCase
 
 		Event::assertDispatchedTimes(GameConfigChanged::class, 1);
 		Event::assertDispatched(GameConfigChanged::class, function ($event) use ($lobby) {
-			return $event instanceof ShouldBroadcast
+			return $event instanceof ShouldBroadcastNow
 				&& $event->broadcastOn()->name === "private-lobby.{$lobby->id}"
 				&& json_encode($event->broadcastWith()) === json_encode([
 					'selected_game' => 'werewolves',
@@ -64,7 +65,7 @@ class GameConfigTest extends TestCase
 
 		Event::assertDispatchedTimes(GameConfigChanged::class, 2);
 		Event::assertDispatched(GameConfigChanged::class, function ($event) use ($lobby) {
-			return $event instanceof ShouldBroadcast
+			return $event instanceof ShouldBroadcastNow
 				&& $event->broadcastOn()->name === "private-lobby.{$lobby->id}"
 				&& json_encode($event->broadcastWith()) === json_encode([
 					'selected_game' => 'werewolves',
@@ -144,6 +145,23 @@ class GameConfigTest extends TestCase
 			]);
 
 		Event::assertDispatchedTimes(GameConfigChanged::class, 0);
+	}
+
+	public function test_one_cannot_change_game_config_while_game_is_starting()
+	{
+		Event::fake([GameConfigChanged::class]);
+		Queue::fake(); // prevent the game from being cancelled immediately by StartMatch job
+
+		$lobby = Lobby::factory()->create([
+			'game_config' => array_merge(Lobby::DEFAULT_CONFIG, ['selected_game' => 'tictactoe']),
+		]);
+		$lobby->createMatch();
+
+		$this->actingAs($lobby->leader)
+			->patchJson("/api/lobby/{$lobby->id}/game-config", [
+				'selected_game' => 'werewolves',
+			])
+			->assertForbidden();
 	}
 
 	public function test_only_lobby_leader_can_do_things()

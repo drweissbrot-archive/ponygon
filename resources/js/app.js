@@ -7,3 +7,4 @@ import './Vue'
 
 import '~Echo'
 import '~Store/lobby-events'
+import '~Store/player-events'

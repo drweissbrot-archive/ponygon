@@ -6,6 +6,7 @@
 		"goldspecdigital/laravel-eloquent-uuid": "^8.0",
 		"guzzlehttp/guzzle": "^7.0",
 		"laravel/framework": "^8.2",
+		"laravel/horizon": "^5.0",
 		"laravel/tinker": "^2.4",
 		"pusher/pusher-php-server": "^4.1"
 	},

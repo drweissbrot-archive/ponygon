@@ -39,6 +39,17 @@ class Player extends Authenticatable
 		return $this->belongsTo(Lobby::class);
 	}
 
+	public function matchData()
+	{
+		if (! $this->lobby->match) {
+			$this->load('lobby.match');
+		}
+
+		return ($this->lobby->match)
+			? $this->lobby->match->instance()->dataForPlayer($this)
+			: null;
+	}
+
 	public function inLobby(Lobby $lobby = null) : bool
 	{
 		return ($lobby)

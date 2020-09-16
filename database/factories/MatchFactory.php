@@ -2,13 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\Game;
 use App\Models\Lobby;
+use App\Models\Match;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class GameFactory extends Factory
+class MatchFactory extends Factory
 {
-	protected $model = Game::class;
+	protected $model = Match::class;
 
 	public function definition()
 	{
