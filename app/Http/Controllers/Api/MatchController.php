@@ -41,4 +41,15 @@ class MatchController extends Controller
 
 		return Response::noContent();
 	}
+
+	public function end(Request $request, Match $match)
+	{
+		if (! $match->instance()->authorizeEndingMatch($request)) {
+			throw new AuthorizationException;
+		}
+
+		$match->lobby->update(['match_id' => null]);
+
+		return Response::noContent();
+	}
 }

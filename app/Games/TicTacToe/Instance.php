@@ -42,6 +42,12 @@ class Instance extends BaseInstance
 		];
 	}
 
+	public function authorizeEndingMatch(Request $request) : bool
+	{
+		return parent::authorizeEndingMatch($request)
+			&& $this->state('winner') !== false;
+	}
+
 	public function authorizeRematch(Request $request) : bool
 	{
 		return $this->state('winner') !== false;

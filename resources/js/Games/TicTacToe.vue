@@ -33,6 +33,12 @@
 						Play again
 					</a>
 				</p>
+
+				<div v-if="isLobbyLeader" class="return-to-lobby">
+					<a href="#" @click.prevent="endMatch">
+						Return to Lobby
+					</a>
+				</div>
 			</template>
 
 			<div class="board">
@@ -57,6 +63,10 @@ export default {
 	},
 
 	methods: {
+		endMatch() {
+			axios.post(`/api/match/${this.matchId}/end`)
+		},
+
 		rematch() {
 			axios.post(`/api/match/${this.matchId}/rematch`)
 		},
@@ -65,6 +75,7 @@ export default {
 	computed: {
 		...mapGetters({
 			data: 'match/data',
+			isLobbyLeader: 'playerIsLeader',
 			matchId: 'match/id',
 			members: 'lobby/members',
 			playerId: 'player/id',

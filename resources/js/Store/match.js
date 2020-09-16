@@ -65,6 +65,7 @@ export default {
 		clear({ commit }) {
 			commit('setId', null)
 			commit('setGame', null)
+			commit('setData', null)
 		},
 	},
 }

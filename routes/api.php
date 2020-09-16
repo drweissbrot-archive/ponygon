@@ -15,4 +15,5 @@ Route::middleware('auth')->group(function () {
 
 	Route::post('/match/{match}/move', 'MatchController@move');
 	Route::post('/match/{match}/rematch', 'MatchController@rematch');
+	Route::post('/match/{match}/end', 'MatchController@end');
 });

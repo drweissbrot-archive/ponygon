@@ -21,6 +21,9 @@ const listenToLobby = (lobbyId) => {
 		.listen('Lobby\\GameConfigChanged', (e) => {
 			store.dispatch('lobby/mergeGameConfig', e)
 		})
+		.listen('Lobby\\MatchCancelled', () => {
+			store.dispatch('match/clear')
+		})
 }
 
 store.subscribe(({ type: mutation }, { lobby }) => {

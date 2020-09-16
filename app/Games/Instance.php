@@ -37,6 +37,11 @@ abstract class Instance
 		return $this->match->lobby->members->contains($request->user());
 	}
 
+	public function authorizeEndingMatch(Request $request) : bool
+	{
+		return $request->user()->id === $this->match->lobby->leader_id;
+	}
+
 	public function authorizeRematch(Request $request) : bool
 	{
 		return false;
