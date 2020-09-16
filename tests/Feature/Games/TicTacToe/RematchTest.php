@@ -10,18 +10,22 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class MoveTest extends TestCase
+class RematchTest extends TestCase
 {
 	use RefreshDatabase;
 
-	public function test_player_can_make_a_move()
+	public function test_players_can_initiate_a_rematch()
 	{
 		Event::fake([MatchData::class]);
 
 		[$lobby, $player] = $this->createLobbyWithGame();
+		$lobby->match->state()->set('score.x', 1);
+		$lobby->match->state()->set('score.o', 3);
+		$lobby->match->state()->set('board', [['x', 'o', 'o'], ['o', 'x', 'x'], ['o', 'x', 'o']]);
+		$lobby->match->state()->set('winner', 'tie');
 
 		$this->actingAs($player)
-			->postJson("/api/match/{$lobby->match->id}/move", ['x' => 0, 'y' => 0])
+			->postJson("/api/match/{$lobby->match->id}/rematch")
 			->assertNoContent();
 
 		Event::assertDispatched(MatchData::class, 2);
@@ -38,81 +42,6 @@ class MoveTest extends TestCase
 
 		$lobby->match->refresh();
 
-		$this->assertEquals($lobby->leader->id, $lobby->match->state('turn'));
-		$this->assertEquals(
-			[['x', null, null], [null, null, null], [null, null, null]],
-			$lobby->match->state('board'),
-		);
-
-		$this->assertSimilar([
-			'scoreboard' => [
-				$player->id => [
-					'role' => 'X',
-					'score' => 0,
-				],
-				$lobby->leader->id => [
-					'role' => 'O',
-					'score' => 0,
-				],
-			],
-
-			'board' => [['x', null, null], [null, null, null], [null, null, null]],
-			'turn' => $lobby->leader->id,
-			'winner' => false,
-		], $player->matchData());
-	}
-
-	public function test_players_cannot_claim_a_node_that_is_already_claimed()
-	{
-		Event::fake([MatchData::class]);
-
-		[$lobby, $player] = $this->createLobbyWithGame();
-
-		$lobby->match->state()->set('board.1.2', 'o');
-
-		$this->actingAs($player)
-			->postJson("/api/match/{$lobby->match->id}/move", ['x' => 1, 'y' => 2])
-			->assertStatus(422)
-			->assertJsonValidationErrors([
-				'x' => 'The provided node is already claimed.',
-			]);
-
-		Event::assertDispatched(MatchData::class, 0);
-
-		$lobby->match->refresh();
-
-		$this->assertEquals($player->id, $lobby->match->state('turn'));
-		$this->assertEquals(
-			[[null, null, null], [null, null, 'o'], [null, null, null]],
-			$lobby->match->state('board'),
-		);
-
-		$this->assertSimilar([
-			'scoreboard' => [
-				$player->id => ['role' => 'X', 'score' => 0],
-				$lobby->leader->id => ['role' => 'O', 'score' => 0],
-			],
-
-			'board' => [[null, null, null], [null, null, 'o'], [null, null, null]],
-			'turn' => $player->id,
-			'winner' => false,
-		], $player->matchData());
-	}
-
-	public function test_players_cannot_make_a_move_when_its_not_their_turn()
-	{
-		Event::fake([MatchData::class]);
-
-		[$lobby, $player] = $this->createLobbyWithGame();
-
-		$this->actingAs($lobby->leader)
-			->postJson("/api/match/{$lobby->match->id}/move", ['x' => 0, 'y' => 0])
-			->assertForbidden();
-
-		Event::assertDispatched(MatchData::class, 0);
-
-		$lobby->match->refresh();
-
 		$this->assertEquals($player->id, $lobby->match->state('turn'));
 		$this->assertEquals(
 			[[null, null, null], [null, null, null], [null, null, null]],
@@ -121,8 +50,8 @@ class MoveTest extends TestCase
 
 		$this->assertSimilar([
 			'scoreboard' => [
-				$player->id => ['role' => 'X', 'score' => 0],
-				$lobby->leader->id => ['role' => 'O', 'score' => 0],
+				$player->id => ['role' => 'X', 'score' => 1],
+				$lobby->leader->id => ['role' => 'O', 'score' => 3],
 			],
 
 			'board' => [[null, null, null], [null, null, null], [null, null, null]],
@@ -131,19 +60,54 @@ class MoveTest extends TestCase
 		], $player->matchData());
 	}
 
-	public function test_moves_cannot_be_made_for_inactive_matches()
+	public function test_players_cannot_initiate_a_rematch_for_an_inactive_match()
 	{
 		Event::fake([MatchData::class]);
 
 		[$lobby, $player] = $this->createLobbyWithGame();
+		$lobby->match->state()->set('board', [[null, 'x', null], [null, 'o', null], [null, null, null]]);
+		$lobby->match->state()->set('winner', 'tie');
 
 		$lobby->update(['match_id' => null]);
 
 		$this->actingAs($player)
-			->postJson("/api/match/{$lobby->match->id}/move", ['x' => 0, 'y' => 0])
+			->postJson("/api/match/{$lobby->match->id}/rematch")
 			->assertNotFound();
 
 		Event::assertDispatched(MatchData::class, 0);
+	}
+
+	public function test_players_cannot_initiate_a_rematch_for_a_match_that_has_not_ended()
+	{
+		Event::fake([MatchData::class]);
+
+		[$lobby, $player] = $this->createLobbyWithGame();
+		$lobby->match->state()->set('board', [[null, 'x', null], [null, 'o', null], [null, null, null]]);
+
+		$this->actingAs($player)
+			->postJson("/api/match/{$lobby->match->id}/rematch")
+			->assertForbidden();
+
+		Event::assertDispatched(MatchData::class, 0);
+
+		$lobby->match->refresh();
+
+		$this->assertEquals($player->id, $lobby->match->state('turn'));
+		$this->assertEquals(
+			[[null, 'x', null], [null, 'o', null], [null, null, null]],
+			$lobby->match->state('board'),
+		);
+
+		$this->assertSimilar([
+			'scoreboard' => [
+				$player->id => ['role' => 'X', 'score' => 0],
+				$lobby->leader->id => ['role' => 'O', 'score' => 0],
+			],
+
+			'board' => [[null, 'x', null], [null, 'o', null], [null, null, null]],
+			'turn' => $player->id,
+			'winner' => false,
+		], $player->matchData());
 	}
 
 	public function test_out_of_lobby_and_unauthenticated()
@@ -152,11 +116,11 @@ class MoveTest extends TestCase
 
 		[$lobby, $player] = $this->createLobbyWithGame();
 
-		$this->postJson("/api/match/{$lobby->match->id}/move", ['x' => 0, 'y' => 0])
+		$this->postJson("/api/match/{$lobby->match->id}/rematch")
 			->assertUnauthorized();
 
 		$this->actingAs(Player::factory()->create())
-			->postJson("/api/match/{$lobby->match->id}/move", ['x' => 0, 'y' => 0])
+			->postJson("/api/match/{$lobby->match->id}/rematch")
 			->assertForbidden();
 
 		Event::assertDispatched(MatchData::class, 0);

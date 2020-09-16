@@ -26,8 +26,9 @@
 					{{ otherPlayer.name }} wins.
 				</h1>
 
-				<p>
+				<p class="rematch">
 					Want a Rematch?
+
 					<a href="#" @click.prevent="rematch">
 						Play again
 					</a>
@@ -44,6 +45,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import { mapGetters } from 'vuex'
 import Board from '~Components/TicTacToe/Board'
 import Player from '~Components/TicTacToe/Player'
@@ -56,13 +58,14 @@ export default {
 
 	methods: {
 		rematch() {
-			// TODO
+			axios.post(`/api/match/${this.matchId}/rematch`)
 		},
 	},
 
 	computed: {
 		...mapGetters({
 			data: 'match/data',
+			matchId: 'match/id',
 			members: 'lobby/members',
 			playerId: 'player/id',
 			playerName: 'player/name',

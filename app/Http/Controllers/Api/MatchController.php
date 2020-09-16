@@ -26,4 +26,19 @@ class MatchController extends Controller
 
 		return Response::noContent();
 	}
+
+	public function rematch(Request $request, Match $match)
+	{
+		if (! $match->instance()->authorizeRematch($request)) {
+			throw new AuthorizationException;
+		}
+
+		$shouldSendData = $match->instance()->initiateRematch();
+
+		if ($shouldSendData) {
+			$match->instance()->sendMatchDataToPlayers();
+		}
+
+		return Response::noContent();
+	}
 }

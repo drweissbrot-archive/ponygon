@@ -42,6 +42,19 @@ class Instance extends BaseInstance
 		];
 	}
 
+	public function authorizeRematch(Request $request) : bool
+	{
+		return $this->state('winner') !== false;
+	}
+
+	public function initiateRematch() : bool
+	{
+		$this->state()->set('board', [[null, null, null], [null, null, null], [null, null, null]]);
+		$this->state()->set('winner', false);
+
+		return true;
+	}
+
 	public function authorizeMoveRequest(Request $request) : bool
 	{
 		return parent::authorizeMoveRequest($request)

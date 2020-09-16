@@ -37,6 +37,16 @@ abstract class Instance
 		return $this->match->lobby->members->contains($request->user());
 	}
 
+	public function authorizeRematch(Request $request) : bool
+	{
+		return false;
+	}
+
+	public function initiateRematch() : bool
+	{
+		return true;
+	}
+
 	public function validateMoveRequest(Request $request) : array
 	{
 		return $request->validate($this->getMoveRequestRules($request));
