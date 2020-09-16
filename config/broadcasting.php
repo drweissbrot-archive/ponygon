@@ -29,7 +29,7 @@ return [
 				'cluster' => env('PUSHER_APP_CLUSTER'),
 				'useTLS' => true,
 				'encrypted' => true,
-				'host' => 'ponygon.test',
+				'host' => env('PUSHER_HOST'),
 				'port' => 6001,
 				'scheme' => 'https',
 			],
