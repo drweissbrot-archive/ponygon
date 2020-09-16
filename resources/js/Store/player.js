@@ -60,6 +60,10 @@ export default {
 			commit('setPreviouslySelectedName', previouslySelectedName)
 		},
 
+		setReady({ commit }, ready) {
+			commit('setReady', ready)
+		},
+
 		async toggleReady({ commit, state }, ready) {
 			ready = ! state.ready
 

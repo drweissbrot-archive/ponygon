@@ -131,6 +131,12 @@ export default {
 			dispatch('log', `${getters.memberById(id).name} is ` + ((ready) ? 'ready' : 'not ready'))
 		},
 
+		setAllUnready({ commit, getters }) {
+			for (const player of getters.members) {
+				commit('modifyMember', { id: player.id, property: 'ready', value: false })
+			}
+		},
+
 		mergeGameConfig({ commit, state }, config) {
 			commit('setGameConfig', Object.assign({}, state.gameConfig, config))
 		},

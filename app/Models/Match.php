@@ -38,6 +38,15 @@ class Match extends Model
 		});
 	}
 
+	public function resolveRouteBinding($value, $field = null)
+	{
+		$match = parent::resolveRouteBinding($value, $field);
+
+		return ($match->lobby->match_id === $match->id)
+			? $match
+			: null;
+	}
+
 	public function lobby()
 	{
 		return $this->belongsTo(Lobby::class);

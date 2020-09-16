@@ -1,0 +1,81 @@
+& {
+	display grid
+	grid-template-columns 1fr 2rem 2.5fr 2rem 1fr
+	grid-template-areas 'self 0 playarea 1 opponent'
+
+	container()
+}
+
+.player {
+	display flex
+	justify-content space-between
+
+	&.--self {
+		grid-area self
+	}
+
+	&.--opponent {
+		grid-area opponent
+
+		flex-direction row-reverse
+		text-align right
+	}
+
+	h2,
+	.symbol {
+		flsize(3rem, 1)
+		font-weight 600
+	}
+
+	.symbol {
+		padding 0 2rem
+	}
+
+	h2 {
+		margin 0
+	}
+}
+
+.playarea {
+	grid-area playarea
+
+	text-align center
+
+	.rematch,
+	.return-to-lobby {
+		margin 2rem 0
+	}
+}
+
+.board {
+	.row {
+		display flex
+		align-items center
+		justify-content center
+
+		&:not(:last-child) {
+			.node {
+				border-bottom none
+			}
+		}
+	}
+
+	.node {
+		flsize(3rem, 1)
+
+		padding 2rem
+		width calc(4rem + 2em)
+		height calc(4rem + 2em)
+		border .1rem solid #fff
+
+		&:not(:last-child) {
+			border-right none
+		}
+
+		&:disabled {
+			background none
+			opacity 1
+			color #ae
+		}
+	}
+}
