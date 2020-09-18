@@ -11,6 +11,8 @@ const listenToLobby = async (lobbyId) => {
 		})
 		.listen('Lobby\\PlayerKicked', ({ player }) => {
 			store.dispatch('lobby/log', `${player.name} was kicked`)
+
+			if (player.id === store.getters['player/id']) store.dispatch('clear')
 		})
 		.listen('Lobby\\PlayerSetReady', (e) => {
 			store.dispatch('lobby/setMemberReady', e)

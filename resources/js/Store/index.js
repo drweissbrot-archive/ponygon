@@ -27,4 +27,12 @@ export default new Vuex.Store({
 			return leaderId && leaderId === getters['player/id']
 		},
 	},
+
+	actions: {
+		clear({ dispatch }) {
+			dispatch('match/clear')
+			dispatch('lobby/clear')
+			dispatch('player/clear')
+		},
+	},
 })
