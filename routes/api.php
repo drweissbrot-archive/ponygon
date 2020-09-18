@@ -1,7 +1,6 @@
 <?php
 
-Route::post('/player', 'PlayerController@create')
-	->middleware('guest');
+Route::post('/player', 'PlayerController@create');
 
 Route::middleware('auth')->group(function () {
 	Route::get('/lobby/{lobby}', 'LobbyController@read');

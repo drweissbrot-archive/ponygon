@@ -84,11 +84,28 @@ class PlayerTest extends TestCase
 		$this->assertDatabaseCount('players', 2);
 	}
 
-	public function test_authenticated_players_cannot_create_players()
+	public function test_it_works_for_players_who_were_already_signed_in()
 	{
-		$this->actingAs(Player::factory()->create())
-			->postJson('/api/player', [
-				'name' => $this->faker->username,
-			])->assertForbidden();
+		$this->actingAs(Player::factory()->create());
+		$this->travel(1)->seconds();
+
+		$res = $this->postJson('/api/player', [
+			'name' => $this->faker->username,
+		])
+			->assertCreated();
+
+		$this->assertDatabaseCount('players', 2);
+		$player = Player::latest()->first();
+
+		$res->assertExactJson([
+			'data' => [
+				'id' => $player->id,
+				'name' => $player->name,
+				'ready' => false,
+			],
+		]);
+
+		$this->assertAuthenticatedAs($player);
+		$this->assertNotNull($player->remember_token);
 	}
 }
