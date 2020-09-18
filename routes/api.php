@@ -4,6 +4,8 @@ Route::post('/player', 'PlayerController@create')
 	->middleware('guest');
 
 Route::middleware('auth')->group(function () {
+	Route::get('/lobby/{lobby}', 'LobbyController@read');
+
 	Route::post('/lobby', 'LobbyController@create');
 	Route::post('/lobby/{lobby}', 'LobbyController@join');
 

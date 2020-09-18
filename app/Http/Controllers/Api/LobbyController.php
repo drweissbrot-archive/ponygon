@@ -15,6 +15,13 @@ use Response;
 
 class LobbyController extends Controller
 {
+	public function read(Request $request, Lobby $lobby)
+	{
+		abort_unless($request->user()->lobby_id === $lobby->id, 403);
+
+		return $lobby->load('members', 'match')->resource();
+	}
+
 	public function create(Request $request)
 	{
 		abort_if($request->user()->lobby, 403);

@@ -1,7 +1,7 @@
 import echo from '~Echo'
 import store from '~Store'
 
-const listenToLobby = (lobbyId) => {
+const listenToLobby = async (lobbyId) => {
 	echo.private(`lobby.${lobbyId}`)
 		.listen('Lobby\\PlayerJoined', ({ player }) => {
 			store.dispatch('lobby/addMember', player)
@@ -36,8 +36,9 @@ store.subscribe(({ type: mutation }, { lobby }) => {
 	listenToLobby(lobby.id)
 })
 
-if (store.getters['lobby/id']) {
-	listenToLobby(store.getters['lobby/id'])
+const lobbyId = store.getters['lobby/id']
 
+if (lobbyId) {
+	listenToLobby(lobbyId)
 	window.location.hash = `#${store.getters['lobby/id']}`
 }

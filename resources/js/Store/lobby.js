@@ -98,12 +98,16 @@ export default {
 	},
 
 	actions: {
-		setLobby({ commit }, { id, leader_id, invite_url, game_config, members }) {
+		setLobby({ commit, getters }, { id, leader_id, invite_url, game_config, members }) {
+			const changedLobbyId = getters.id !== id
+
 			commit('setId', id)
 			commit('setLeaderId', leader_id)
 			commit('setInviteUrl', invite_url)
 			commit('setGameConfig', game_config)
-			commit('clearLog')
+			commit('clearMembers')
+
+			if (changedLobbyId) commit('clearLog')
 
 			for (const member of members) {
 				commit('addMember', member)

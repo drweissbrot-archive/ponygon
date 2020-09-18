@@ -14,6 +14,7 @@ class LobbyResource extends JsonResource
 			'game_config' => $this->game_config,
 			'invite_url' => $this->invite_url,
 			'members' => PlayerResource::collection($this->members),
+			'match' => new MatchResource($this->whenLoaded('match')),
 		];
 	}
 }
