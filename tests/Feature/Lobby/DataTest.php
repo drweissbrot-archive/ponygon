@@ -59,6 +59,7 @@ class DataTest extends TestCase
 						'id' => $lobby->refresh()->match->id,
 						'game' => 'tictactoe',
 					],
+					'match_data' => $player->matchData(),
 				],
 			]);
 	}

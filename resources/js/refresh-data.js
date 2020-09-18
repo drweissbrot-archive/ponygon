@@ -10,12 +10,15 @@ const refreshData = async () => {
 
 		store.dispatch('lobby/setLobby', lobby)
 
-		if (lobby.match) {
-			store.dispatch('match/setMatch', lobby.match)
-			// TODO refresh match data
-		} else {
-			store.dispatch('match/clear')
+		const playerId = store.getters['player/id']
+
+		if (playerId) {
+			const member = lobby.members.find(({ id }) => id === playerId)
+			store.dispatch('player/setReady', member.ready)
 		}
+
+		if (lobby.match) store.dispatch('match/setMatch', { match: lobby.match, data: lobby.match_data })
+		else store.dispatch('match/clear')
 	} catch (e) {
 		if (e.response && [401, 403, 404].includes(e.response.status))
 		throw e
