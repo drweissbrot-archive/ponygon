@@ -2,7 +2,7 @@ import echo from '~Echo'
 import store from '~Store'
 
 const listenToPlayer = (playerId) => {
-	echo.private(`player.${playerId}`)
+	echo.singlePlayer(playerId)
 		.listen('Player\\MatchStarting', ({ match, data }) => {
 			store.dispatch('match/setMatch', { match, data })
 		})

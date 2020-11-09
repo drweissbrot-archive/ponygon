@@ -2,7 +2,7 @@ import echo from '~Echo'
 import store from '~Store'
 
 const listenToLobby = async (lobbyId) => {
-	echo.private(`lobby.${lobbyId}`)
+	echo.singleLobby(lobbyId)
 		.listen('Lobby\\PlayerJoined', ({ player }) => {
 			store.dispatch('lobby/addMember', player)
 		})
