@@ -1,6 +1,6 @@
 <template>
 	<div class="log">
-		<Entry v-for="(entry, index) in entries" :key="index" :entry="entry" />
+		<Entry ref="entries" v-for="(entry, index) in entries" :key="index" :entry="entry" />
 	</div>
 </template>
 
@@ -14,6 +14,22 @@ export default {
 
 	props: {
 		entries: { required: true },
+	},
+
+	mounted() {
+		this.scrollLatestIntoView()
+	},
+
+	methods: {
+		scrollLatestIntoView() {
+			this.$refs.entries[this.$refs.entries.length - 1].$el.scrollIntoView()
+		},
+	},
+
+	watch: {
+		entries(now, previously) {
+			this.scrollLatestIntoView()
+		},
 	},
 }
 </script>

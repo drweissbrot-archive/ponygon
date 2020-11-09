@@ -11,14 +11,18 @@ html {
 }
 
 body {
-	min-height 100vh
+	height 100vh
 	font 1.6rem/1.5em $sans
 
 	display grid
-	grid-template-rows auto max-content
+	grid-template-rows 1fr max-content
 }
 
-#app > * {
-	display grid
-	min-height 100%
+#app {
+	overflow-y auto
+
+	> * {
+		display grid
+		height 100%
+	}
 }
